@@ -1,0 +1,78 @@
+<html>
+    <body>
+        <div>
+            <input id="name" type="text"></input>
+            <button id="createDocumentButton">Create</button>
+        </div>
+        <div id="documents"></div>
+        <div>
+            <button id="logoutButton"> Logout </button>
+        </div>
+
+        <script>
+            document.getElementById("createDocumentButton").addEventListener("click", () => {
+                fetch("http://coolkids.cse356.compas.cs.stonybrook.edu/collection/create", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: document.getElementById("name").value })
+                })
+            });
+
+            document.getElementById("logoutButton").addEventListener("click", () => {
+                fetch("http://coolkids.cse356.compas.cs.stonybrook.edu/users/logout", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+            });
+
+            async function initialize() {
+                let response = await fetch("http://coolkids.cse356.compas.cs.stonybrook.edu/collection/list", {
+                    method: "GET"
+                })
+
+                let result = await response.json();
+                let root = document.getElementById("documents");
+
+                for (let i = 0; i < result.length; i++) {
+                    let card = document.createElement("div");
+
+                    let name = document.createElement("span");
+                    name.innerHTML = result[i].name;
+
+                    let editButton = document.createElement("button");
+                    editButton.innerHTML = "Edit";
+                    editButton.addEventListener("click", () => {
+                        window.location.href = `http://coolkids.cse356.compas.cs.stonybrook.edu/edit/${result[i].id}`;
+                    })
+
+                    let deleteButton = document.createElement("button");
+                    deleteButton.innerHTML = "Delete"
+                    deleteButton.addEventListener("click", () => {
+                        fetch("http://coolkids.cse356.compas.cs.stonybrook.edu/collection/delete", {
+                            method: "POST",
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ id: result[i].id })
+                        })
+                    })
+
+                    card.appendChild(name);
+                    card.appendChild(editButton);
+                    card.appendChild(deleteButton);
+                    root.appendChild(card);
+                }
+            }
+
+            initialize();
+
+        </script>
+    </body>
+</html>

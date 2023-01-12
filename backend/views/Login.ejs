@@ -1,0 +1,23 @@
+<html>
+    <body>
+        <div>
+            <div> Login </div>
+            <div> Email <input id="email" type="text"></input></div>
+            <div> Password <input id="password" type="text"></input></div>
+            <button id="loginButton"> Submit </button>
+        </div>
+
+        <script>
+            document.getElementById("loginButton").addEventListener("click", () => {
+                fetch("http://coolkids.cse356.compas.cs.stonybrook.edu/users/login", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: document.getElementById("email").value, password: document.getElementById("password").value }) })
+            });
+
+        </script>
+    </body>
+</html>
